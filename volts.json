@@ -1,0 +1,10 @@
+[
+    {
+        "name": "lapce-elixir-ls",
+        "version": "0.0.1",
+        "display-name": "Elixir LS",
+        "author": "Mayel",
+        "description": "Elixir for Lapce: powered by Elixir LS",
+        "meta": "https://raw.githubusercontent.com/mayel/lapce-elixir-ls/master/volt.toml"
+    }
+]

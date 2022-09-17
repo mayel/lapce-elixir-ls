@@ -1,11 +1,17 @@
-name = "<plugin-name>"
-version = "0.0.0"
-author = "<your name>"
-display-name = "<plugin-display-name>"
-description = "<plugin-description>"
+name = "lapce-elixir-ls"
+version = "0.0.1"
+author = "Mayel @ Bonfire"
+display-name = "Elixir LS"
+description = "Language Server for Elixir"
 
-# for non-theme plugins
-# wasm = "bin/<plugin-name>.wasm"
+repository = "mayel/lapce-elixir-ls"
+wasm = "bin/lapce-elixir-ls.wasm"
 
-# for theme plugins
-# themes = ["theme-one.toml", "theme-two.toml", "theme-three.toml"]
+[configuration]
+language_id = "elixir"
+system_lsp = false
+disabled = false
+release = "0.0.1"
+
+[configuration.options.binary]
+args = []

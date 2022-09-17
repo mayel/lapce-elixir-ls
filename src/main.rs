@@ -1,7 +1,7 @@
 use anyhow::Result;
 use lapce_plugin::{
     psp_types::{
-        lsp_types::{request::Initialize, InitializeParams, Url},
+        lsp_types::{request::Initialize, DocumentFilter, InitializeParams, Url},
         Request,
     },
     register_plugin, LapcePlugin, VoltEnvironment, PLUGIN_RPC,
@@ -13,14 +13,14 @@ struct State {}
 
 register_plugin!(State);
 
-const LANGUAGE_ID: &str = "language_id";
+const LANGUAGE: &str = "elixir";
 
 fn initialize(params: InitializeParams) -> Result<()> {
     let mut server_args = vec![];
 
     // Check for user specified LSP server path
     // ```
-    // [lapce-plugin-name.lsp]
+    // [lapce-elixir-ls.lsp]
     // serverPath = "[path or filename]"
     // serverArgs = ["--arg1", "--arg2"]
     // ```
@@ -42,7 +42,11 @@ fn initialize(params: InitializeParams) -> Result<()> {
                         PLUGIN_RPC.start_lsp(
                             Url::parse(&format!("urn:{}", server_path))?,
                             server_args,
-                            LANGUAGE_ID,
+                            vec![DocumentFilter {
+                                language: Some(LANGUAGE.to_string()),
+                                scheme: None,
+                                pattern: None,
+                            }],
                             params.initialization_options,
                         );
                         return Ok(());
@@ -68,27 +72,31 @@ fn initialize(params: InitializeParams) -> Result<()> {
     };
 
     // Download URL
-    // let _ = format!("https://github.com/<name>/<project>/releases/download/<version>/{filename}");
+    // let _ = format!("https://github.com/elixir-lsp/elixir-ls/releases/download/v0.11.0/elixir-ls-1.11-22.3.zip");
 
     // see lapce_plugin::Http for available API to download files
 
-    let _ = match VoltEnvironment::operating_system().as_deref() {
+    let filename = match VoltEnvironment::operating_system().as_deref() {
         Ok("windows") => {
-            format!("{}.exe", "[filename]")
+            format!("{}.bat", "elixir-ls-release/language_server")
         }
-        _ => "[filename]".to_string(),
+        _ => "elixir-ls-release/language_server.sh".to_string(),
     };
 
     // Plugin working directory
     let volt_uri = VoltEnvironment::uri()?;
-    let server_path = Url::parse(&volt_uri)?.join("[filename]")?;
+    let server_path = Url::parse(&volt_uri)?.join(&filename)?;
 
     // Available language IDs
     // https://github.com/lapce/lapce/blob/HEAD/lapce-proxy/src/buffer.rs#L173
     PLUGIN_RPC.start_lsp(
         server_path,
         server_args,
-        LANGUAGE_ID,
+        vec![DocumentFilter {
+                                language: Some(LANGUAGE.to_string()),
+                                scheme: None,
+                                pattern: None,
+                            }],
         params.initialization_options,
     );
 
